@@ -21,9 +21,19 @@ def get_word_indices(summary_words):
     return word_indices
 
 
+def get_inverted_index(title_terms):
+    inverted_index = defaultdict(lambda: defaultdict(list))
+
+    for a_file, words in title_terms.items():
+        for a_word, positions in words.items():
+            print(a_word, positions)
+            inverted_index[a_word][a_file] = positions
+    return inverted_index
+
+
 def prepare_inverted_index():
     try:
-        with open('data.json') as summaries_file:
+        with open('data2.json') as summaries_file:
             title_terms = {}
 
             summaries = json.load(summaries_file)
@@ -40,10 +50,9 @@ def prepare_inverted_index():
                 logger.info('Getting word indices for book {}'.format(a_title_id))
                 title_terms[a_title_id] = get_word_indices(summary_words)
 
+            logger.info('Preparing inverted index for words in all summaries')
+            inverted_index = get_inverted_index(title_terms)
+
     except FileNotFoundError:
         logger.error('Make sure you\'ve included file in the folder: {}'
-                     .format(os.path.dirname(os.path.realpath(__file__))    
-))
-
-
-prepare_inverted_index()
+                     .format(os.path.dirname(os.path.realpath(__file__))))
